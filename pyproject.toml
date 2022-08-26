@@ -8,6 +8,7 @@ authors = ["TatianaBelova333 <101121235+TatianaBelova333@users.noreply.github.co
 python = "^3.10"
 psycopg2 = "^2.9.3"
 Pillow = "^9.2.0"
+djangorestframework = "^3.13.1"
 
 [tool.poetry.dev-dependencies]
 

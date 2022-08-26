@@ -16,15 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-
+from rest_framework import routers
 from SKYPRO_HOMEWORK_27 import settings
+from users.views.location import LocationViewSet
 
+
+router = routers.SimpleRouter()
+router.register('location', LocationViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
     path('', include('ads.urls')),
     path('user/', include('users.urls')),
 ]
+
+urlpatterns += router.urls
 
 if settings.DEBUG:
     static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

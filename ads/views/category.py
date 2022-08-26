@@ -1,12 +1,39 @@
-import json
 from django.http import JsonResponse
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from ads.models import Category
+from ads.serializers import CategorySerializer
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 
 
+class CategoryListView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryDetailView(RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryCreateView(CreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryUpdateView(UpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryDeleteView(DestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+"""
 class CategoryListView(ListView):
     model = Category
 
@@ -14,13 +41,8 @@ class CategoryListView(ListView):
         super().get(self, request, *args, **kwargs)
 
         categories = self.object_list.order_by('name')
+        response = CategorySerializer(categories, many=True).data
 
-        response = []
-        for category in categories:
-            response.append({
-                "id": category.id,
-                "name": category.name,
-                })
         return JsonResponse(response, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
@@ -32,11 +54,9 @@ class CategoryDetailView(DetailView):
             category = self.get_object()
         except Category.DoesNotExist:
             return JsonResponse({"error": "Not found"}, status=404)
+        response = CategorySerializer(category).data
 
-        return JsonResponse({
-                "id": category.id,
-                "name": category.name,
-            }, status=200)
+        return JsonResponse(response, status=200)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -50,11 +70,8 @@ class CategoryCreateView(CreateView):
         cat = Category.objects.create(
                 name=cat_data["name"],
             )
+        return JsonResponse(CategorySerializer(cat).data, status=201)
 
-        return JsonResponse({
-            "id": cat.id,
-            "name": cat.name,
-        }, status=201)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -66,16 +83,10 @@ class CategoryUpdateView(UpdateView):
         super().post(request, *args, **kwargs)
 
         cat_data = json.loads(request.body)
-
         cat = self.object
-
         cat.name = cat_data["name"]
         cat.save()
-
-        return JsonResponse({
-            "id": cat.id,
-            "name": cat.name,
-        }, status=201)
+        return JsonResponse(CategorySerializer(cat).data, status=201)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -87,3 +98,4 @@ class CategoryDeleteView(DeleteView):
         super().delete(request, *args, **kwargs)
 
         return JsonResponse({'status': 'ok'}, status=404)
+"""
